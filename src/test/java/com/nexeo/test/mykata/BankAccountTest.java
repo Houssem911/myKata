@@ -2,10 +2,8 @@ package com.nexeo.test.mykata;
 
 import static org.junit.Assert.*;
 
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 
 import com.nexeo.mykata.customexceptions.AmountBelowMinimumException;
 import com.nexeo.mykata.customexceptions.WithdrawAmountValidityException;
@@ -19,20 +17,17 @@ import com.nexeo.mykata.services.BankAccountService;
  * @author Houssem Selmi
  * 
  */
-
-// Fix method execution order to method names alphabetically
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BankAccountTest {
 
-	private static BankAccountService bankAccountService;
-	private static BankAccount bankAccount;
+	private BankAccountService bankAccountService;
+	private BankAccount bankAccount;
 	private static final String TEST_ADDRESS = "77 Rue Daguerre, 75014 Paris";
 	private static final Double INITIAL_BALANCE = 1000D;
 	private static final Double DEPOSIT_AMOUNT = 100D;
 	private static final Double WITHDRAW_AMOUNT = 250D;
 
-	@BeforeClass
-	public static void initialization() {
+	@Before
+	public void initialization() {
 		bankAccountService = new BankAccountService();
 		Customer customer = new Customer.CustomerBuilder().withName("Houssem").withLastName("Selmi").withAge(26).withAddress(TEST_ADDRESS).build();
 		assertNotNull(customer);
@@ -49,6 +44,7 @@ public class BankAccountTest {
 			e.printStackTrace();
 		}
 		assertEquals(new Double(INITIAL_BALANCE + DEPOSIT_AMOUNT), bankAccount.getAvailableBalance());
+		bankAccountService.printOperationsHistory(bankAccount);
 	}
 
 	@Test
@@ -60,7 +56,7 @@ public class BankAccountTest {
 		} catch (WithdrawIsNotPermitedException e) {
 			e.printStackTrace();
 		}
-		assertEquals(new Double(INITIAL_BALANCE + DEPOSIT_AMOUNT - WITHDRAW_AMOUNT), bankAccount.getAvailableBalance());
+		assertEquals(new Double(INITIAL_BALANCE - WITHDRAW_AMOUNT), bankAccount.getAvailableBalance());
 		bankAccountService.printOperationsHistory(bankAccount);
 	}
 
